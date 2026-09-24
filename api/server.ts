@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { actors, actions, plays, towns, type Actor } from './content.js';
+import { route } from './route.js';
 
 type Draft = { playId:string; assignments:Record<string,'main'|'support'|'rehearse'|'rest'>; timeline:{actionId:string; actorIds:string[]; act:number; slot:number}[]; endings:number[] };
 type Tour = { id:string; name:string; seed:number; status:string; townIds:string[]; stopIndex:number; funds:number; reputation:number; inspiration:number; version:number; actors:(Actor & {level:number;xp:number;stamina:number;fatigue:number})[]; visited:string[]; clues:Record<string,string[]>; draft?:Draft; history:any[]; unlocked:string[] };
@@ -15,7 +16,6 @@ const app=express(); app.use(cors()); app.use(express.json({limit:'1mb'}));
 const ok=(res:any,data:any)=>res.json(data); const fail=(res:any,code:string,message:string,status=400)=>res.status(status).json({code,message});
 const getTour=(req:Request,res:Response):Tour|null=>{const t=tours.find(x=>x.id===req.params.id);if(!t){fail(res,'TOUR_NOT_FOUND','存档不存在',404);return null}return t};
 function town(t:Tour){return towns.find(x=>x.id===t.townIds[t.stopIndex])!}
-function route(seed:number){let state=(seed>>>0)||1;const shuffled=towns;for(let i=shuffled.length-1;i>0;i--){state=(state*1664525+1013904223)>>>0;const j=state%(i+1);[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]}return shuffled.slice(0,6).map(x=>x.id)}
 app.get('/health/live',(_,res)=>ok(res,{ok:true}));
 app.get('/api/v1/content/bootstrap',(_,res)=>ok(res,{actors,actions,plays,towns}));
 app.get('/api/v1/tours',(_,res)=>ok(res,{tours:tours.map(t=>({id:t.id,name:t.name,status:t.status,stopIndex:t.stopIndex,funds:t.funds,reputation:t.reputation}))}));

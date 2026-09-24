@@ -41,3 +41,5 @@ export const actions:Action[] = [
  {id:'chase',name:'追逐',category:'位移',duration:2,stamina:8,tags:['滑稽'],description:'节奏明快的舞台追逐。'},
  {id:'listen',name:'侧耳倾听',category:'表演',duration:1,stamina:2,tags:['神秘','哀思'],description:'让木偶听见传说的回声。'}
 ];
+// 公共内容以稳定顺序对外提供，任何接口都不得重排（路线洗牌须使用副本）。
+Object.freeze(actors); Object.freeze(towns); Object.freeze(plays); Object.freeze(actions);
